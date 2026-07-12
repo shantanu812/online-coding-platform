@@ -1,0 +1,75 @@
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from jose import JWTError
+from sqlalchemy.orm import Session
+
+from app.auth.jwt import decode_access_token
+from app.database.session import get_db
+from app.models.user import User
+from app.repositories.user_repository import UserRepository
+from app.services.user_service import UserService
+
+security = HTTPBearer()
+
+
+def get_user_repository(
+    db: Session = Depends(get_db),
+) -> UserRepository:
+    return UserRepository(db)
+
+
+def get_user_service(
+    repository: UserRepository = Depends(get_user_repository),
+) -> UserService:
+    return UserService(repository)
+
+
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    service: UserService = Depends(get_user_service),
+) -> User:
+
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials.",
+    )
+
+    try:
+        payload = decode_access_token(credentials.credentials)
+        user_id = int(payload["sub"])
+
+    except (JWTError, KeyError, ValueError):
+        raise credentials_exception
+
+    user = service.get_user_by_id(user_id)
+
+    if user is None:
+        raise credentials_exception
+
+    return user
+
+
+def get_current_active_user(
+    current_user: User = Depends(get_current_user),
+) -> User:
+
+    if not current_user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Inactive user.",
+        )
+
+    return current_user
+
+
+def get_current_admin_user(
+    current_user: User = Depends(get_current_active_user),
+) -> User:
+
+    if not current_user.is_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin privileges required.",
+        )
+
+    return current_user
