@@ -1,3 +1,7 @@
 from app.services.user_service import UserService
+from app.services.problem_service import ProblemService
 
-__all__ = ["UserService"]
+__all__ = [
+    "ProblemService",
+    "UserService"
+]

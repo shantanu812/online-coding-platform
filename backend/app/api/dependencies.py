@@ -8,6 +8,8 @@ from app.database.session import get_db
 from app.models.user import User
 from app.repositories.user_repository import UserRepository
 from app.services.user_service import UserService
+from app.repositories.problem_repository import ProblemRepository
+from app.services.problem_service import ProblemService
 
 security = HTTPBearer()
 
@@ -73,3 +75,14 @@ def get_current_admin_user(
         )
 
     return current_user
+
+def get_problem_repository(
+    db: Session = Depends(get_db),
+) -> ProblemRepository:
+    return ProblemRepository(db)
+
+
+def get_problem_service(
+    repository: ProblemRepository = Depends(get_problem_repository),
+) -> ProblemService:
+    return ProblemService(repository)
