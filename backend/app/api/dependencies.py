@@ -10,6 +10,8 @@ from app.repositories.user_repository import UserRepository
 from app.services.user_service import UserService
 from app.repositories.problem_repository import ProblemRepository
 from app.services.problem_service import ProblemService
+from app.repositories.test_case_repository import TestCaseRepository
+from app.services.test_case_service import TestCaseService
 
 security = HTTPBearer()
 
@@ -86,3 +88,22 @@ def get_problem_service(
     repository: ProblemRepository = Depends(get_problem_repository),
 ) -> ProblemService:
     return ProblemService(repository)
+
+def get_test_case_repository(
+    db=Depends(get_db),
+) -> TestCaseRepository:
+    return TestCaseRepository(db)
+
+
+def get_test_case_service(
+    test_case_repository: TestCaseRepository = Depends(
+        get_test_case_repository
+    ),
+    problem_repository: ProblemRepository = Depends(
+        get_problem_repository
+    ),
+) -> TestCaseService:
+    return TestCaseService(
+        test_case_repository,
+        problem_repository,
+    )

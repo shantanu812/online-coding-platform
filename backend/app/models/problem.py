@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from enum import Enum
-
-from sqlalchemy import (
+from sqlalchemy.orm import Mapped, mapped_column, relationship 
+from sqlalchemy import ( 
     Boolean,
     DateTime,
     Enum as SqlEnum,
@@ -10,7 +10,7 @@ from sqlalchemy import (
     String,
     Text,
 )
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 
 from app.database.base import Base
 
@@ -124,3 +124,9 @@ class Problem(Base):
     )
 
     creator = relationship("User", backref="created_problems")
+
+    test_cases = relationship(
+        "TestCase",
+        back_populates="problem",
+        cascade="all, delete-orphan",
+    )
