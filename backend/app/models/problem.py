@@ -130,3 +130,8 @@ class Problem(Base):
         back_populates="problem",
         cascade="all, delete-orphan",
     )
+    submissions = relationship(
+        "Submission",
+        back_populates="problem",
+        cascade="all, delete-orphan",
+    )
