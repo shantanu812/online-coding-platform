@@ -90,3 +90,21 @@ class TestCaseRepository:
         )
 
         return list(self.db.scalars(statement).all())
+    
+    def get_hidden_test_cases_by_problem(
+        self,
+        problem_id: int,
+    ) -> list[TestCase]:
+       
+        statement = (
+            select(TestCase)
+            .where(
+                TestCase.problem_id == problem_id,
+                TestCase.is_hidden.is_(True),
+            )
+            .order_by(TestCase.id)
+        )
+
+        return list(
+            self.db.scalars(statement).all()
+        )

@@ -15,8 +15,7 @@ class SubmissionService:
     SUPPORTED_LANGUAGES = {
         "python",
         "cpp",
-        "java",
-        "c",
+        "java"
     }
 
     def __init__(

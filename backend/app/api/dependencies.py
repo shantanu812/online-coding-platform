@@ -14,6 +14,7 @@ from app.repositories.test_case_repository import TestCaseRepository
 from app.services.test_case_service import TestCaseService
 from app.repositories.submission_repository import SubmissionRepository
 from app.services.submission_service import SubmissionService
+from app.services.judge_service import JudgeService
 
 security = HTTPBearer()
 
@@ -131,4 +132,22 @@ def get_submission_service(
         submission_repository,
         user_repository,
         problem_repository,
+    )
+
+def get_judge_service(
+    submission_repository: SubmissionRepository = Depends(
+        get_submission_repository
+    ),
+    problem_repository: ProblemRepository = Depends(
+        get_problem_repository
+    ),
+    test_case_repository: TestCaseRepository = Depends(
+        get_test_case_repository
+    ),
+) -> JudgeService:
+  
+    return JudgeService(
+        submission_repository=submission_repository,
+        problem_repository=problem_repository,
+        test_case_repository=test_case_repository,
     )
