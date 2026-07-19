@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import  datetime, timezone
 from enum import Enum
 
 from sqlalchemy import (
@@ -16,6 +16,7 @@ from sqlalchemy.orm import (
 )
 
 from app.database.base import Base
+from app.models.contest import Contest
 
 
 class SubmissionStatus(str, Enum):
@@ -106,15 +107,15 @@ class Submission(Base):
     )
 
     submitted_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.utcnow,
+        DateTime(timezone=True),
+        default=datetime.now(timezone.utc),
         nullable=False,
     )
 
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow,
+        DateTime(timezone=True),
+        default=datetime.now(timezone.utc),
+        onupdate=datetime.now(timezone.utc),
         nullable=False,
     )
 
@@ -125,5 +126,15 @@ class Submission(Base):
 
     problem = relationship(
         "Problem",
+        back_populates="submissions",
+    )
+    contest_id: Mapped[int | None] = mapped_column(
+    ForeignKey("contests.id"),
+    nullable=True,
+    index=True,
+    )
+
+    contest: Mapped["Contest | None"] = relationship(
+        "Contest",
         back_populates="submissions",
     )

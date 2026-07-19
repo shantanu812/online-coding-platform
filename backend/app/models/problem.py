@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from app.models.contest import Contest, contest_problems
 from enum import Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship 
 from sqlalchemy import ( 
@@ -111,13 +112,13 @@ class Problem(Base):
     )
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime,
+        DateTime(timezone=True),
         default=datetime.now(timezone.utc),
         nullable=False,
     )
 
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime,
+        DateTime(timezone=True),
         default=datetime.now(timezone.utc),
         onupdate=datetime.now(timezone.utc),
         nullable=False,
@@ -134,4 +135,9 @@ class Problem(Base):
         "Submission",
         back_populates="problem",
         cascade="all, delete-orphan",
+    )
+    contests: Mapped[list["Contest"]] = relationship(
+    "Contest",
+    secondary=contest_problems,
+    back_populates="problems",
     )

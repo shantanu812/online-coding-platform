@@ -18,6 +18,14 @@ from app.schemas.submission import (
     SubmissionResponse,
     SubmissionStatusResponse,
 )
+from app.schemas.contest import (
+    ContestCreate,
+    ContestListResponse,
+    ContestProblemAdd,
+    ContestRegistration,
+    ContestResponse,
+    ContestUpdate,
+)
 __all__ = [
     "ProblemCreate",
     "ProblemUpdate",
@@ -32,5 +40,11 @@ __all__ = [
     "SubmissionResponse",
     "SubmissionListResponse",
     "SubmissionStatusResponse",
+    "ContestCreate",
+    "ContestListResponse",
+    "ContestProblemAdd",
+    "ContestRegistration",
+    "ContestResponse",
+    "ContestUpdate",
 ]
 

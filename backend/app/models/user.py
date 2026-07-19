@@ -1,9 +1,9 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import String, DateTime, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
-
+from app.models.contest import Contest, contest_participants
 
 class User(Base):
     __tablename__ = "users"
@@ -35,12 +35,23 @@ class User(Base):
     )
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.utcnow,
+        DateTime(timezone=True),
+        default=datetime.now(timezone.utc),
     )
 
     submissions = relationship(
         "Submission",
         back_populates="user",
         cascade="all, delete-orphan",
+    )
+    contests: Mapped[list["Contest"]] = relationship(
+    "Contest",
+    secondary=contest_participants,
+    back_populates="participants",
+    )
+
+    created_contests: Mapped[list["Contest"]] = relationship(
+        "Contest",
+        foreign_keys="Contest.created_by",
+        back_populates="creator",
     )
