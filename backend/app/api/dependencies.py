@@ -17,7 +17,8 @@ from app.services.submission_service import SubmissionService
 from app.services.judge_service import JudgeService
 from app.repositories.contest_repository import ContestRepository
 from app.services.contest_service import ContestService
-
+from app.repositories.leaderboard_repository import LeaderboardRepository
+from app.services.leaderboard_service import LeaderboardService
 
 security = HTTPBearer()
 
@@ -167,3 +168,16 @@ def get_contest_service(
     ),
 ) -> ContestService:
     return ContestService(repository)
+
+def get_leaderboard_repository(
+    db: Session = Depends(get_db),
+) -> LeaderboardRepository:
+    return LeaderboardRepository(db)
+
+
+def get_leaderboard_service(
+    repository: LeaderboardRepository = Depends(
+        get_leaderboard_repository,
+    ),
+) -> LeaderboardService:
+    return LeaderboardService(repository)
